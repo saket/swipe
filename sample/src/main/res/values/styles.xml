@@ -1,26 +1,13 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <color name="color_accent">#356859</color>
   <color name="color_control_normal">#356859</color>
   <color name="window_background">#B5D2C3</color>
 
-  <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-    <item name="colorPrimary">@color/window_background</item>
-    <item name="colorPrimaryDark">@color/window_background</item>
-    <item name="colorAccent">@color/color_accent</item>
-    <item name="android:windowBackground">@color/window_background</item>
-    <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
-    <item name="toolbarStyle">@style/ToolbarStyle</item>
-
-    <item name="colorControlNormal">@color/color_control_normal</item>    <!-- Menu icons -->
-    <item name="android:textColorPrimary">@color/color_accent</item>      <!-- Menu items -->
-    <item name="android:textColorSecondary">#729288</item>                <!-- Sub-menu titles -->
-  </style>
-
-  <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
-    <item name="titleTextAppearance">@style/ToolbarTitleAppearance</item>
-  </style>
-
-  <style name="ToolbarTitleAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-    <item name="fontFamily">@font/work_sans_bold</item>
+  <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+<!--    <item name="colorPrimary">@color/window_background</item>-->
+<!--    <item name="colorPrimaryDark">@color/window_background</item>-->
+<!--    <item name="colorAccent">@color/color_accent</item>-->
+<!--    <item name="android:windowBackground">@color/window_background</item>-->
+<!--    <item name="android:windowLightStatusBar">true</item>-->
   </style>
 </resources>

@@ -12,10 +12,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import me.saket.swipe.SwipeActionMeta
 import kotlin.math.roundToInt
-
-internal const val animationDurationMs = 4_00
 
 @Stable
 internal class SwipeRippleState {
@@ -64,7 +61,6 @@ internal class SwipeRippleState {
     scope.launch {
       progressAsync.await()
       alphaAsync.await()
-      ripple.value = null
     }
   }
 

@@ -15,6 +15,9 @@ android {
   buildFeatures {
     compose = true
   }
+  composeOptions {
+    kotlinCompilerExtensionVersion = versions.composeUi
+  }
 
   kotlinOptions {
     jvmTarget = "11"
