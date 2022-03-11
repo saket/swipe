@@ -152,8 +152,8 @@ class SwipeableActionsBoxTest {
   }
 
   @Composable
-  fun rememberSwipeActionsState(initialOffset: Dp): SwipeActionsState {
-    return rememberSwipeActionsState().also {
+  fun rememberSwipeActionsState(initialOffset: Dp): SwipeableActionsState {
+    return rememberSwipeableActionsState().also {
       it.offsetState.value = LocalDensity.current.run { initialOffset.toPx() }
     }
   }

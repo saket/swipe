@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 @Composable
 fun SwipeableActionsBox(
   modifier: Modifier = Modifier,
-  state: SwipeActionsState = rememberSwipeActionsState(),
+  state: SwipeableActionsState = rememberSwipeableActionsState(),
   startActions: List<SwipeAction> = emptyList(),
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,

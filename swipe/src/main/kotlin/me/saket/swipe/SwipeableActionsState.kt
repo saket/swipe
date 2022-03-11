@@ -13,15 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-fun rememberSwipeActionsState(): SwipeActionsState {
-  return remember { SwipeActionsState() }
+fun rememberSwipeableActionsState(): SwipeableActionsState {
+  return remember { SwipeableActionsState() }
 }
 
 /**
  * The state of a [SwipeableActionsBox].
  */
 @Stable
-class SwipeActionsState internal constructor() {
+class SwipeableActionsState internal constructor() {
   /**
    * The current position (in pixels) of a [SwipeableActionsBox].
    */
