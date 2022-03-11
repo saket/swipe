@@ -5,7 +5,6 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,12 +18,13 @@ import androidx.compose.material.icons.twotone.Archive
 import androidx.compose.material.icons.twotone.ReplyAll
 import androidx.compose.material.icons.twotone.Snooze
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +35,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
@@ -44,16 +49,34 @@ class SampleActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
+      val uiController = rememberSystemUiController()
+      LaunchedEffect(Unit) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        uiController.setSystemBarsColor(Color.Transparent, darkIcons = true)
+        uiController.setNavigationBarColor(Color.Transparent)
+      }
+
       val colors = lightColorScheme().copy(
-        background = Color(0XFFF8F5FA),
-        surface = Color(0XFFF8F5FA)
+        background = Color.Whisper,
+        surface = Color.Whisper
       )
 
       MaterialTheme(colors) {
-        Scaffold(
-          topBar = { LargeTopAppBar(title = { Text("Inbox") }) }
-        ) {
-          SwipeableBoxPreview()
+        ProvideWindowInsets {
+          Scaffold(
+            topBar = {
+              SmallTopAppBar(
+                modifier = Modifier.statusBarsPadding(),
+                title = { Text("Swipe") }
+              )
+            }
+          ) {
+            SwipeableBoxPreview(
+              Modifier
+                .navigationBarsPadding()
+                .padding(top = 60.dp)
+            )
+          }
         }
       }
     }
@@ -61,49 +84,44 @@ class SampleActivity : AppCompatActivity() {
 }
 
 @Composable
-private fun SwipeableBoxPreview() {
-  Column(
-    modifier = Modifier.fillMaxWidth(),
-    verticalArrangement = Arrangement.Center
+private fun SwipeableBoxPreview(modifier: Modifier = Modifier) {
+  var isSnoozed by rememberSaveable { mutableStateOf(false) }
+  var isArchived by rememberSaveable { mutableStateOf(false) }
+
+  val replyAll = SwipeAction(
+    icon = rememberVectorPainter(Icons.TwoTone.ReplyAll),
+    background = Color.Perfume,
+    onSwipe = { println("Reply swiped") },
+    isUndo = false,
+  )
+  val snooze = SwipeAction(
+    icon = rememberVectorPainter(Icons.TwoTone.Snooze),
+    background = Color.SeaBuckthorn,
+    onSwipe = { isSnoozed = !isSnoozed },
+    isUndo = isSnoozed,
+  )
+  val archive = SwipeAction(
+    icon = rememberVectorPainter(Icons.TwoTone.Archive),
+    background = Color.Fern,
+    onSwipe = { isArchived = !isArchived },
+    isUndo = isArchived,
+  )
+
+  SwipeableActionsBox(
+    modifier = modifier,
+    startActions = listOf(replyAll),
+    endActions = listOf(snooze, archive),
+    swipeThreshold = 40.dp,
+    backgroundUntilSwipeThreshold = Color.GraySuit
   ) {
-    var isSnoozed by rememberSaveable { mutableStateOf(false) }
-    var isArchived by rememberSaveable { mutableStateOf(false) }
-
-    val replyAll = SwipeAction(
-      icon = rememberVectorPainter(Icons.TwoTone.ReplyAll),
-      background = Color.Perfume,
-      onSwipe = { println("Reply swiped") },
-      isUndo = false,
-    )
-    val snooze = SwipeAction(
-      icon = rememberVectorPainter(Icons.TwoTone.Snooze),
-      background = Color.SeaBuckthorn,
-      onSwipe = { isSnoozed = !isSnoozed },
-      isUndo = isSnoozed,
-    )
-    val archive = SwipeAction(
-      icon = rememberVectorPainter(Icons.TwoTone.Archive),
-      background = Color.Fern,
-      onSwipe = { isArchived = !isArchived },
-      isUndo = isArchived,
-    )
-
-    SwipeableActionsBox(
-      startActions = listOf(replyAll),
-      endActions = listOf(snooze, archive),
-      swipeThreshold = 40.dp,
-      backgroundUntilSwipeThreshold = Color(0xFFC1BAC9),
-      content = {
-        ListItem(
-          isSnoozed = isSnoozed
-        )
-      }
+    BatmanIpsumItem(
+      isSnoozed = isSnoozed
     )
   }
 }
 
 @Composable
-private fun ListItem(
+private fun BatmanIpsumItem(
   modifier: Modifier = Modifier,
   isSnoozed: Boolean
 ) {
@@ -148,6 +166,8 @@ private fun ListItem(
   }
 }
 
+val Color.Companion.Whisper get() = Color(0XFFF8F5FA)
 val Color.Companion.SeaBuckthorn get() = Color(0xFFF9A825)
 val Color.Companion.Fern get() = Color(0xFF66BB6A)
 val Color.Companion.Perfume get() = Color(0xFFD0BCFF)
+val Color.Companion.GraySuit get() = Color(0xFFC1BAC9)

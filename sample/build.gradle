@@ -42,4 +42,6 @@ dependencies {
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
   implementation "androidx.compose.material3:material3:1.0.0-alpha07"
   implementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
+  implementation "com.google.accompanist:accompanist-systemuicontroller:$versions.accompanist"
+  implementation "com.google.accompanist:accompanist-insets:$versions.accompanist"
 }
