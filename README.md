@@ -1,6 +1,8 @@
 # swipe
 
-https://user-images.githubusercontent.com/2387680/157794412-d6a4503f-8346-44d2-ba84-2328d5cad993.mp4
+https://user-images.githubusercontent.com/2387680/157795117-3a343625-4a34-4303-bb28-d2deea7f9b68.mp4
+
+
 
 ## License
 
