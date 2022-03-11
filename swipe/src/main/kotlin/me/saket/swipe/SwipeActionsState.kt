@@ -26,7 +26,7 @@ class SwipeActionsState internal constructor() {
    * The current position (in pixels) of a [SwipeableActionsBox].
    */
   val offset: State<Float> get() = offsetState
-  private var offsetState = mutableStateOf(0f)
+  internal var offsetState = mutableStateOf(0f)
 
   /**
    * Whether [SwipeableActionsBox] is currently animating to reset its offset after it was swiped.

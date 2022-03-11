@@ -35,6 +35,20 @@ class SwipeAction(
   init {
     require(weight > 0.0) { "invalid weight $weight; must be greater than zero" }
   }
+
+  fun copy(
+    onSwipe: () -> Unit = this.onSwipe,
+    icon: @Composable () -> Unit = this.icon,
+    background: Color = this.background,
+    weight: Double = this.weight,
+    isUndo: Boolean = this.isUndo,
+  ) = SwipeAction(
+    onSwipe = onSwipe,
+    icon = icon,
+    background = background,
+    weight = weight,
+    isUndo = isUndo
+  )
 }
 
 /**

@@ -9,6 +9,7 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   }
 
   dependencies {
@@ -16,6 +17,7 @@ buildscript {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
     classpath "com.vanniktech:gradle-maven-publish-plugin:0.13.0"
     classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.18"
+    classpath "app.cash.paparazzi:paparazzi-gradle-plugin:1.0.0-SNAPSHOT"
   }
 }
 
@@ -23,6 +25,7 @@ allprojects {
   repositories {
     google()
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   }
 }
 

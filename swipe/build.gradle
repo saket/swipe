@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.vanniktech.maven.publish'
+apply plugin: 'app.cash.paparazzi'
 
 android {
   resourcePrefix "swipe_"
@@ -31,4 +32,10 @@ android {
 dependencies {
   implementation "androidx.compose.ui:ui:$versions.composeUi"
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
+
+  testImplementation "junit:junit:4.13.2"
+  testImplementation "androidx.compose.material3:material3:1.0.0-alpha07"
+  testImplementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
+  testImplementation "androidx.savedstate:savedstate:1.1.0"
+  testImplementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
 }
