@@ -16,8 +16,8 @@ buildscript {
   dependencies {
     classpath "com.android.tools.build:gradle:7.1.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-    classpath "com.vanniktech:gradle-maven-publish-plugin:0.13.0"
-    classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.18"
+    classpath "com.vanniktech:gradle-maven-publish-plugin:0.19.0"
+    classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
     classpath "app.cash.paparazzi:paparazzi-gradle-plugin:1.0.0-SNAPSHOT"
   }
 }
