@@ -82,7 +82,7 @@ class SwipeableActionsBoxTest {
     }
   }
 
-  /*@Test*/ fun `distribute widths to actions according on their weights`() {
+  @Test fun `distribute widths to actions according on their weights`() {
     paparazzi.snapshot {
       Scaffold {
         val boxWidth = maxWidth
