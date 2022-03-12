@@ -72,9 +72,7 @@ class SampleActivity : AppCompatActivity() {
             }
           ) {
             SwipeableBoxPreview(
-              Modifier
-                .navigationBarsPadding()
-                .padding(top = 60.dp)
+              Modifier.navigationBarsPadding()
             )
           }
         }
