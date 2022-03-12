@@ -35,7 +35,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * A composable that can be swiped left or right to reveal actions.
+ * A composable that can be swiped left or right for revealing actions.
  *
  * @param swipeThreshold Minimum drag distance before any [SwipeAction] is
  * activated and can be swiped.

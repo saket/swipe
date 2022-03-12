@@ -2,7 +2,11 @@
 
 https://user-images.githubusercontent.com/2387680/157795117-3a343625-4a34-4303-bb28-d2deea7f9b68.mp4
 
-`SwipeableActionsBox` is a composable that can be swiped left or right to reveal actions. Unlike [SwipeToDismiss](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#SwipeToDismiss(androidx.compose.material.DismissState,androidx.compose.ui.Modifier,kotlin.collections.Set,kotlin.Function1,kotlin.Function1,kotlin.Function1)), it is designed for swipe actions that _do not_ dismiss the composable.
+`swipe` builds composables that can be swiped left or right for revealing actions. Unlike [SwipeToDismiss](https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#SwipeToDismiss(androidx.compose.material.DismissState,androidx.compose.ui.Modifier,kotlin.collections.Set,kotlin.Function1,kotlin.Function1,kotlin.Function1)), it is designed for swipe actions that _do not_ dismiss the composable.
+
+```groovy
+implementation "me.saket.swipe:swipe:1.0.0"
+```
 
 ```kotlin
 val archive = SwipeAction(
