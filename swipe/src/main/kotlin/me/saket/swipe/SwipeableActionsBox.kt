@@ -6,11 +6,13 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation.Horizontal
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,20 +87,20 @@ fun SwipeableActionsBox(
     when {
       swipedAction != null -> swipedAction!!.value.background
       !thresholdCrossed -> backgroundUntilSwipeThreshold
-      else -> visibleAction!!.value.background
+      visibleAction == null -> Color.Transparent
+      else -> visibleAction.value.background
     }
   )
 
   Box(
     modifier = Modifier
-      .background(backgroundColor)
       .absoluteOffset { IntOffset(x = offset.roundToInt(), y = 0) }
       .drawOverContent { ripple.draw(scope = this) }
       .draggable(
         orientation = Horizontal,
         enabled = !state.isResettingOnRelease,
         onDragStopped = {
-          if (thresholdCrossed) {
+          if (thresholdCrossed && visibleAction != null) {
             swipedAction = visibleAction
             swipedAction!!.value.onSwipe()
             ripple.animate(
@@ -121,6 +123,7 @@ fun SwipeableActionsBox(
       modifier = Modifier.matchParentSize(),
       action = action,
       offset = offset,
+      backgroundColor = backgroundColor,
       content = { action.value.icon() }
     )
   }
@@ -130,12 +133,12 @@ fun SwipeableActionsBox(
 private fun ActionIconBox(
   action: SwipeActionMeta,
   offset: Float,
+  backgroundColor: Color,
   modifier: Modifier = Modifier,
   content: @Composable () -> Unit
 ) {
   Row(
     modifier = modifier
-      .wrapContentWidth(align = Alignment.Start)
       .layout { measurable, constraints ->
         val placeable = measurable.measure(constraints)
         layout(width = placeable.width, height = placeable.height) {
@@ -143,7 +146,9 @@ private fun ActionIconBox(
           val iconOffset = if (action.isOnRightSide) constraints.maxWidth + offset else offset - placeable.width
           placeable.placeRelative(x = iconOffset.roundToInt(), y = 0)
         }
-      },
+      }
+      .background(color = backgroundColor),
+    horizontalArrangement = if (action.isOnRightSide) Arrangement.Start else Arrangement.End,
     verticalAlignment = Alignment.CenterVertically,
   ) {
     content()
