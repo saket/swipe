@@ -23,8 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -43,6 +46,8 @@ import kotlin.math.roundToInt
  * @param backgroundUntilSwipeThreshold Color drawn behind the content until
  * [swipeThreshold] is reached. When the threshold is passed, this color is
  * replaced by the currently visible [SwipeAction]'s background.
+ *
+ * @param enableHapticFeedback Whether to perform haptic feedback when swipe threshold is crossed
  */
 @Composable
 fun SwipeableActionsBox(
@@ -52,6 +57,8 @@ fun SwipeableActionsBox(
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
+  enableHapticFeedback: Boolean = false,
+  hapticFeedback: HapticFeedback = LocalHapticFeedback.current,
   content: @Composable BoxScope.() -> Unit
 ) = BoxWithConstraints(modifier) {
   val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
@@ -88,6 +95,14 @@ fun SwipeableActionsBox(
       else -> visibleAction!!.value.background
     }
   )
+
+  if (enableHapticFeedback) {
+    LaunchedEffect(thresholdCrossed) {
+      if (thresholdCrossed && visibleAction != null) {
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+      }
+    }
+  }
 
   Box(
     modifier = Modifier
