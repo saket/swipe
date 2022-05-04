@@ -41,8 +41,8 @@ class SwipeableActionsBoxTest {
   @get:Rule val paparazzi = Paparazzi(
     deviceConfig = DeviceConfig.PIXEL_5,
     environment = detectEnvironment().copy(
-      platformDir = "${androidHome()}/platforms/android-30",
-      compileSdkVersion = 30
+      platformDir = "${androidHome()}/platforms/android-31",
+      compileSdkVersion = 31
     ),
   )
 
