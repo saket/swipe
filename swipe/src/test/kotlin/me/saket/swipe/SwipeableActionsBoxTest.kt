@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.ReplyAll
@@ -118,6 +120,23 @@ class SwipeableActionsBoxTest {
           swipeThreshold = 40.dp,
           backgroundUntilSwipeThreshold = Color.GraySuit,
           content = { BatmanIpsumItem(background = Color.Unspecified) }
+        )
+      }
+    }
+  }
+
+  @Test fun `show last swipe action even when swipe distance exceeds content width`() {
+    paparazzi.snapshot {
+      Scaffold {
+        SwipeableActionsBox(
+          modifier = Modifier
+            .width(200.dp)
+            .requiredHeight(100.dp),
+          state = rememberSwipeActionsState(initialOffset = (-210).dp),
+          endActions = listOf(snooze),
+          swipeThreshold = 40.dp,
+          backgroundUntilSwipeThreshold = Color.GraySuit,
+          content = { BatmanIpsumItem() }
         )
       }
     }

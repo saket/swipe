@@ -20,10 +20,16 @@ internal data class ActionFinder(
     val isOnRightSide = offset < 0f
     val actions = if (isOnRightSide) right else left
 
-    return SwipeActionMeta(
-      value = actions.actionAt(abs(offset), totalWidth) ?: return null,
-      isOnRightSide = isOnRightSide
+    val actionAtOffset = actions.actionAt(
+      offset = abs(offset).coerceAtMost(totalWidth.toFloat()),
+      totalWidth = totalWidth
     )
+    return actionAtOffset?.let {
+      SwipeActionMeta(
+        value = actionAtOffset,
+        isOnRightSide = isOnRightSide
+      )
+    }
   }
 
   private fun List<SwipeAction>.actionAt(offset: Float, totalWidth: Int): SwipeAction? {
@@ -34,6 +40,7 @@ internal data class ActionFinder(
     val totalWeights = this.sumOf { it.weight }
     var offsetSoFar = 0.0
 
+    @Suppress("ReplaceManualRangeWithIndicesCalls") // Avoid allocating an Iterator for every pixel swiped.
     for (i in 0 until size) {
       val action = this[i]
       val actionWidth = (action.weight / totalWeights) * totalWidth
