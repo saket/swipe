@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -76,7 +77,7 @@ class SwipeableActionsBoxTest {
           startActions = listOf(snooze),
           swipeThreshold = 40.dp,
           backgroundUntilSwipeThreshold = Color.GraySuit,
-          content = { BatmanIpsumItem() }
+          content = { BatmanIpsumItem(background = Color.Unspecified) }
         )
       }
     }
@@ -108,6 +109,20 @@ class SwipeableActionsBoxTest {
     }
   }
 
+  @Test fun `swipe action's background should not be drawn behind content`() {
+    paparazzi.snapshot {
+      Scaffold {
+        SwipeableActionsBox(
+          state = rememberSwipeActionsState(initialOffset = 80.dp),
+          startActions = listOf(snooze),
+          swipeThreshold = 40.dp,
+          backgroundUntilSwipeThreshold = Color.GraySuit,
+          content = { BatmanIpsumItem(background = Color.Unspecified) }
+        )
+      }
+    }
+  }
+
   @Composable
   private fun Scaffold(content: @Composable BoxWithConstraintsScope.() -> Unit) {
     BoxWithConstraints(
@@ -120,12 +135,15 @@ class SwipeableActionsBoxTest {
   }
 
   @Composable
-  private fun BatmanIpsumItem(modifier: Modifier = Modifier) {
+  private fun BatmanIpsumItem(
+    modifier: Modifier = Modifier,
+    background: Color = Color.White
+  ) {
     Row(
       modifier
         .fillMaxWidth()
-        .shadow(1.dp)
-        .background(Color.White)
+        .shadow(if (background.isSpecified) 1.dp else 0.dp)
+        .background(background)
         .padding(20.dp)
         .animateContentSize()
     ) {
