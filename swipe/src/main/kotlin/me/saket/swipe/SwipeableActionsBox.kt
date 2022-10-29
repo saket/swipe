@@ -52,6 +52,7 @@ fun SwipeableActionsBox(
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
+  limitSwipeDistanceToSwipeThreshold: Boolean = false,
   content: @Composable BoxScope.() -> Unit
 ) = BoxWithConstraints(modifier) {
   val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
@@ -74,6 +75,7 @@ fun SwipeableActionsBox(
 
   val offset = state.offset.value
   val thresholdCrossed = abs(offset) > swipeThresholdPx
+  val swipeDistance = swipeThresholdPx.roundToInt()
 
   var swipedAction: SwipeActionMeta? by remember {
     mutableStateOf(null)
@@ -92,7 +94,19 @@ fun SwipeableActionsBox(
 
   Box(
     modifier = Modifier
-      .absoluteOffset { IntOffset(x = offset.roundToInt(), y = 0) }
+      .absoluteOffset {
+        IntOffset(
+          //If limitSwipeDistanceToSwipeThreshold is false Box may be dragged without limit
+          x = if(!limitSwipeDistanceToSwipeThreshold) offset.roundToInt()
+          //Limit distance Box can be dragged to the right
+          else if(offset.roundToInt() > swipeDistance) swipeDistance
+          //Limit distance Box can be dragged to the left
+          else if(offset.roundToInt() < -swipeDistance) -swipeDistance
+          //Distance Box is dragged before reaching limit
+          else offset.roundToInt(),
+          y = 0
+        )
+      }
       .drawOverContent { ripple.draw(scope = this) }
       .draggable(
         orientation = Horizontal,
@@ -122,7 +136,9 @@ fun SwipeableActionsBox(
       action = action,
       offset = offset,
       backgroundColor = backgroundColor,
-      content = { action.value.icon() }
+      content = { action.value.icon() },
+      limitSwipeDistance = limitSwipeDistanceToSwipeThreshold,
+      boxOffset = swipeDistance
     )
   }
 }
@@ -133,7 +149,9 @@ private fun ActionIconBox(
   offset: Float,
   backgroundColor: Color,
   modifier: Modifier = Modifier,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
+  limitSwipeDistance: Boolean,
+  boxOffset: Int
 ) {
   Row(
     modifier = modifier
@@ -142,7 +160,13 @@ private fun ActionIconBox(
         layout(width = placeable.width, height = placeable.height) {
           // Align icon with the left/right edge of the content being swiped.
           val iconOffset = if (action.isOnRightSide) constraints.maxWidth + offset else offset - placeable.width
-          placeable.placeRelative(x = iconOffset.roundToInt(), y = 0)
+          placeable.placeRelative(
+            x = if(!limitSwipeDistance) iconOffset.roundToInt()
+            else if(offset > boxOffset) -constraints.maxWidth+boxOffset
+            else if(offset < -boxOffset) constraints.maxWidth-boxOffset
+            else iconOffset.roundToInt(),
+            y = 0
+          )
         }
       }
       .background(color = backgroundColor),
