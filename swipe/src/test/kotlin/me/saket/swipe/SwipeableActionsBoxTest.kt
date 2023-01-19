@@ -45,9 +45,6 @@ class SwipeableActionsBoxTest {
     deviceConfig = DeviceConfig.PIXEL_5,
     showSystemUi = false,
     renderingMode = RenderingMode.SHRINK,
-    environment = detectEnvironment().copy(
-      platformDir = "${androidHome()}/platforms/android-32",
-    ),
   )
 
   @Test fun `empty actions`() {
