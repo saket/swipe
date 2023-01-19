@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -37,15 +36,17 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.androidHome
 import app.cash.paparazzi.detectEnvironment
+import com.android.ide.common.rendering.api.SessionParams.RenderingMode
 import org.junit.Rule
 import org.junit.Test
 
 class SwipeableActionsBoxTest {
   @get:Rule val paparazzi = Paparazzi(
     deviceConfig = DeviceConfig.PIXEL_5,
+    showSystemUi = false,
+    renderingMode = RenderingMode.SHRINK,
     environment = detectEnvironment().copy(
-      platformDir = "${androidHome()}/platforms/android-31",
-      compileSdkVersion = 31
+      platformDir = "${androidHome()}/platforms/android-32",
     ),
   )
 
@@ -146,7 +147,7 @@ class SwipeableActionsBoxTest {
   private fun Scaffold(content: @Composable BoxWithConstraintsScope.() -> Unit) {
     BoxWithConstraints(
       modifier = Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
         .background(Color.Whisper),
       content = content,
       contentAlignment = Alignment.Center
