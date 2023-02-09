@@ -10,13 +10,13 @@ implementation "me.saket.swipe:swipe:1.0.0"
 
 ```kotlin
 val archive = SwipeAction(
-  icon = painterResource(R.drawable.archive),
+  icon = rememberVectorPainter(Icons.TwoTone.Archive),
   background = Color.Green,
   onSwipe = { … }
 )
 
 val snooze = SwipeAction(
-  icon = painterResource(R.drawable.snooze),
+  icon = { Text("Snooze") },
   background = Color.Yellow,
   isUndo = true,
   onSwipe = { … },
