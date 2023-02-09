@@ -34,7 +34,7 @@ dependencies {
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
 
   testImplementation "junit:junit:4.13.2"
-  testImplementation "androidx.compose.material3:material3:1.0.1"
+  testImplementation "androidx.compose.material3:material3:$versions.composeMaterial3"
   testImplementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
   testImplementation "androidx.savedstate:savedstate:1.1.0"
   testImplementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
