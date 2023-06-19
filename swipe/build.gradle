@@ -36,3 +36,13 @@ dependencies {
   testImplementation "androidx.savedstate:savedstate:1.1.0"
   testImplementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
 }
+
+// Used on CI to prevent publishing of non-snapshot versions.
+tasks.register('throwIfVersionIsNotSnapshot') {
+  def libraryVersion = project.findProperty("VERSION_NAME") as String
+  println("libraryVersion = $libraryVersion")
+  println("2nd attempt = ${properties.get("VERSION_NAME")}")
+  if (!libraryVersion.endsWith("SNAPSHOT")) {
+    throw new GradleException("Project isn't using a snapshot version = $libraryVersion")
+  }
+}

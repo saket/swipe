@@ -56,7 +56,7 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
 
       - name: Ensure snapshot version
-        run: ./gradlew throwIfVersionIsNotSnapshot
+        run: ./gradlew swipe:throwIfVersionIsNotSnapshot
 
       - name: Publish snapshot
         run: ./gradlew clean publish --no-daemon --no-parallel --no-configuration-cache --stacktrace
