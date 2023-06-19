@@ -9,8 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -18,9 +17,8 @@ import kotlin.math.roundToInt
 internal class SwipeRippleState {
   private var ripple = mutableStateOf<SwipeRipple?>(null)
 
-  fun animate(
+  suspend fun animate(
     action: SwipeActionMeta,
-    scope: CoroutineScope
   ) {
     val drawOnRightSide = action.isOnRightSide
     val action = action.value
@@ -36,31 +34,28 @@ internal class SwipeRippleState {
     // Reverse animation feels faster (especially for larger swipe distances) so slow it down further.
     val animationDurationMs = (animationDurationMs * (if (action.isUndo) 1.75f else 1f)).roundToInt()
 
-    val progressAsync = scope.async {
-      Animatable(initialValue = 0f).animateTo(
-        targetValue = 1f,
-        animationSpec = tween(durationMillis = animationDurationMs),
-        block = {
-          ripple.value = ripple.value!!.copy(progress = value)
-        }
-      )
-    }
-    val alphaAsync = scope.async {
-      Animatable(initialValue = if (action.isUndo) 0f else 0.25f).animateTo(
-        targetValue = if (action.isUndo) 0.5f else 0f,
-        animationSpec = tween(
-          durationMillis = animationDurationMs,
-          delayMillis = if (action.isUndo) 0 else animationDurationMs / 2
-        ),
-        block = {
-          ripple.value = ripple.value!!.copy(alpha = value)
-        }
-      )
-    }
-
-    scope.launch {
-      progressAsync.await()
-      alphaAsync.await()
+    coroutineScope {
+      launch {
+        Animatable(initialValue = 0f).animateTo(
+          targetValue = 1f,
+          animationSpec = tween(durationMillis = animationDurationMs),
+          block = {
+            ripple.value = ripple.value!!.copy(progress = value)
+          }
+        )
+      }
+      launch {
+        Animatable(initialValue = if (action.isUndo) 0f else 0.25f).animateTo(
+          targetValue = if (action.isUndo) 0.5f else 0f,
+          animationSpec = tween(
+            durationMillis = animationDurationMs,
+            delayMillis = if (action.isUndo) 0 else animationDurationMs / 2
+          ),
+          block = {
+            ripple.value = ripple.value!!.copy(alpha = value)
+          }
+        )
+      }
     }
   }
 

@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,6 +91,7 @@ fun SwipeableActionsBox(
     }
   )
 
+  val scope = rememberCoroutineScope()
   Box(
     modifier = Modifier
       .absoluteOffset { IntOffset(x = offset.roundToInt(), y = 0) }
@@ -98,15 +100,14 @@ fun SwipeableActionsBox(
         orientation = Horizontal,
         enabled = !state.isResettingOnRelease,
         onDragStopped = {
-          if (thresholdCrossed && visibleAction != null) {
-            swipedAction = visibleAction
-            swipedAction!!.value.onSwipe()
-            ripple.animate(
-              action = swipedAction!!,
-              scope = this
-            )
+          scope.launch {
+            if (thresholdCrossed && visibleAction != null) {
+              swipedAction = visibleAction
+              swipedAction!!.value.onSwipe()
+              ripple.animate(action = swipedAction!!)
+            }
           }
-          launch {
+          scope.launch {
             state.resetOffset()
             swipedAction = null
           }
