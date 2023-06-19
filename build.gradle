@@ -7,10 +7,10 @@ import com.android.build.gradle.BasePlugin as AndroidBasePlugin
 buildscript {
   ext.versions = [
     compileSdk: 33,
-    kotlin: '1.8.10',
-    composeUi: '1.3.1',
-    composeCompiler: '1.4.2',
-    composeMaterial3: '1.0.1',
+    kotlin: '1.8.21',
+    composeUi: '1.4.3',
+    composeCompiler: '1.4.7',
+    composeMaterial3: '1.1.0',
     accompanist: '0.28.0',
   ]
 
@@ -24,7 +24,7 @@ buildscript {
     classpath "com.android.tools.build:gradle:8.0.2"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
     classpath "com.vanniktech:gradle-maven-publish-plugin:0.24.0"
-    classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.7.20"
+    classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.8.10"
     classpath "app.cash.paparazzi:paparazzi-gradle-plugin:1.3.0"
   }
 }
