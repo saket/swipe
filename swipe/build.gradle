@@ -5,6 +5,7 @@ apply plugin: 'app.cash.paparazzi'
 
 android {
   resourcePrefix "swipe_"
+  namespace "me.saket.swipe"
 
   compileSdkVersion versions.compileSdk
   defaultConfig.minSdkVersion 21
@@ -14,10 +15,6 @@ android {
   }
   composeOptions {
     kotlinCompilerExtensionVersion = versions.composeCompiler
-  }
-
-  kotlinOptions {
-    jvmTarget = "11"
   }
 
   java {
