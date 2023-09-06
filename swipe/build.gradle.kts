@@ -9,8 +9,11 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-group = "me.saket.swipe"
-version = "1.3.0-SNAPSHOT"
+val libraryGroup = "me.saket.swipe"
+val libraryVersion = "1.3.0-SNAPSHOT"
+
+group = libraryGroup
+version = libraryVersion
 
 kotlin {
     androidTarget()
@@ -49,7 +52,7 @@ kotlin {
 
 android {
     compileSdk = 34
-    namespace = "me.saket.swipe"
+    namespace = libraryGroup
 
     defaultConfig {
         minSdk = 21
@@ -86,5 +89,12 @@ mavenPublishing {
                 url.set("https://github.com/saket")
             }
         }
+    }
+}
+
+tasks.register("throwIfVersionIsNotSnapshot") {
+    println("libraryVersion = $libraryVersion")
+    if (!libraryVersion.endsWith("SNAPSHOT")) {
+        throw GradleException("Project isn't using a snapshot version = $libraryVersion")
     }
 }
