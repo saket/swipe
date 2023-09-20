@@ -1,2 +1,2 @@
-include ':swipe'
+include ':library'
 include ':sample'
