@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +57,9 @@ fun SwipeableActionsBox(
   val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
   val leftActions = if (isRtl) endActions else startActions
   val rightActions = if (isRtl) startActions else endActions
-  val swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
+
+  state.canSwipeTowardsRight = leftActions.isNotEmpty()
+  state.canSwipeTowardsLeft = rightActions.isNotEmpty()
 
   val ripple = remember {
     SwipeRippleState()
@@ -66,15 +67,9 @@ fun SwipeableActionsBox(
   val actions = remember(leftActions, rightActions) {
     ActionFinder(left = leftActions, right = rightActions)
   }
-  LaunchedEffect(state, actions) {
-    state.run {
-      canSwipeTowardsRight = { leftActions.isNotEmpty() }
-      canSwipeTowardsLeft = { rightActions.isNotEmpty() }
-    }
-  }
 
   val offset = state.offset.value
-  val thresholdCrossed = abs(offset) > swipeThresholdPx
+  val thresholdCrossed = abs(offset) > LocalDensity.current.run { swipeThreshold.toPx() }
 
   var swipedAction: SwipeActionMeta? by remember {
     mutableStateOf(null)
