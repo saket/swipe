@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import com.android.build.gradle.BaseExtension as AndroidBaseExtension
+import com.android.build.gradle.BasePlugin as AndroidBasePlugin
 
 buildscript {
   repositories {
@@ -18,20 +20,16 @@ plugins {
   alias(libs.plugins.dokka) apply false
 }
 
-tasks.register('clean', Delete) {
-  delete rootProject.buildDir
-}
-
 allprojects {
-  plugins.withType(com.android.build.gradle.BasePlugin).configureEach {
-    project.android {
+  plugins.withType<AndroidBasePlugin>().configureEach {
+    configure<AndroidBaseExtension> {
       compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
       }
     }
   }
-  tasks.withType(KotlinJvmCompile).configureEach {
+  tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_11)
     }
