@@ -1,8 +1,39 @@
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.compose.multiplatform)
   alias(libs.plugins.mavenPublish)
   alias(libs.plugins.paparazzi)
+}
+
+kotlin {
+  @Suppress("OPT_IN_USAGE")
+  targetHierarchy.default()
+
+  androidTarget()
+  jvm()
+  iosX64()
+  iosArm64()
+  iosSimulatorArm64()
+
+  sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(compose.ui)
+        implementation(compose.foundation)
+      }
+    }
+
+    val androidUnitTest by getting {
+      dependencies {
+        implementation(libs.junit)
+        implementation(libs.compose.material3)
+        implementation(libs.compose.materialIcons)
+        implementation(libs.androidx.savedstate)
+        implementation(libs.androidx.lifecycle)
+      }
+    }
+  }
 }
 
 android {
@@ -24,17 +55,6 @@ android {
   lint {
     abortOnError = true
   }
-}
-
-dependencies {
-  implementation(libs.compose.ui)
-  implementation(libs.compose.foundation)
-
-  testImplementation(libs.junit)
-  testImplementation(libs.compose.material3)
-  testImplementation(libs.compose.materialIcons)
-  testImplementation(libs.androidx.savedstate)
-  testImplementation(libs.androidx.lifecycle)
 }
 
 // Used on CI to prevent publishing of non-snapshot versions.

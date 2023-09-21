@@ -6,6 +6,7 @@ agp = "8.1.0"
 androidx-compose-ui = "1.5.1"   # https://developer.android.com/jetpack/androidx/releases/compose-ui
 androidx-compose-ui-material3 = "1.1.1"
 androidx-compose-compiler = "1.5.3" # https://developer.android.com/jetpack/androidx/releases/compose-compiler
+compose-multiplatform = "1.5.1" # https://github.com/JetBrains/compose-multiplatform/releases
 androidx-appcompat = "1.6.1"
 androidx-activity = "1.7.2"  # https://developer.android.com/jetpack/androidx/releases/activity
 androidx-savedstate = "1.2.1"  # https://developer.android.com/jetpack/androidx/releases/savedstate
@@ -21,11 +22,12 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 
 [libraries]
-## TODO remove compose libs in favor of declaring via jetbrains compose plugin
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose-ui" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-ui-material3" }
