@@ -37,5 +37,4 @@ dependencies {
   implementation libs.compose.material3
   implementation libs.compose.materialIcons
   implementation libs.accompanist.systemUi
-  implementation libs.accompanist.insets
 }
