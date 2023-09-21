@@ -1,47 +1,46 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.vanniktech.maven.publish'
-apply plugin: 'app.cash.paparazzi'
+plugins {
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.mavenPublish)
+  alias(libs.plugins.paparazzi)
+}
 
 android {
   resourcePrefix "swipe_"
   namespace "me.saket.swipe"
 
-  compileSdkVersion versions.compileSdk
-  defaultConfig.minSdkVersion 21
-
+  defaultConfig {
+    minSdk libs.versions.minSdk.get().toInteger()
+    compileSdk libs.versions.compileSdk.get().toInteger()
+  }
   buildFeatures {
     compose = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = versions.composeCompiler
+    kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
   }
-
   java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(11))
   }
-
   lintOptions {
     abortOnError true
   }
 }
 
 dependencies {
-  implementation "androidx.compose.ui:ui:$versions.composeUi"
-  implementation "androidx.compose.foundation:foundation:$versions.composeUi"
+  implementation libs.compose.ui
+  implementation libs.compose.foundation
 
-  testImplementation "junit:junit:4.13.2"
-  testImplementation "androidx.compose.material3:material3:$versions.composeMaterial3"
-  testImplementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
-  testImplementation "androidx.savedstate:savedstate:1.1.0"
-  testImplementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+  testImplementation libs.junit
+  testImplementation libs.compose.material3
+  testImplementation libs.compose.materialIcons
+  testImplementation libs.androidx.savedstate
+  testImplementation libs.androidx.lifecycle
 }
 
 // Used on CI to prevent publishing of non-snapshot versions.
 tasks.register('throwIfVersionIsNotSnapshot') {
   def libraryVersion = project.findProperty("VERSION_NAME") as String
-  println("libraryVersion = $libraryVersion")
-  println("2nd attempt = ${properties.get("VERSION_NAME")}")
   if (!libraryVersion.endsWith("SNAPSHOT")) {
     throw new GradleException("Project isn't using a snapshot version = $libraryVersion")
   }
