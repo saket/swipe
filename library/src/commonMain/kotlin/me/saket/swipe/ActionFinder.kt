@@ -8,8 +8,8 @@ internal data class SwipeActionMeta(
 )
 
 internal data class ActionFinder(
-  private val left: List<SwipeAction>,
-  private val right: List<SwipeAction>
+  val left: List<SwipeAction>,
+  val right: List<SwipeAction>
 ) {
 
   fun actionAt(offset: Float, totalWidth: Int): SwipeActionMeta? {

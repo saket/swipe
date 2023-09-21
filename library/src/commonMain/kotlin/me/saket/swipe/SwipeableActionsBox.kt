@@ -1,5 +1,3 @@
-@file:Suppress("NAME_SHADOWING")
-
 package me.saket.swipe
 
 import androidx.compose.animation.animateColorAsState
@@ -14,24 +12,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -54,57 +48,38 @@ fun SwipeableActionsBox(
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
   content: @Composable BoxScope.() -> Unit
 ) = BoxWithConstraints(modifier) {
-  val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-  val leftActions = if (isRtl) endActions else startActions
-  val rightActions = if (isRtl) startActions else endActions
-
-  state.canSwipeTowardsRight = leftActions.isNotEmpty()
-  state.canSwipeTowardsLeft = rightActions.isNotEmpty()
-
-  val ripple = remember {
-    SwipeRippleState()
-  }
-  val actions = remember(leftActions, rightActions) {
-    ActionFinder(left = leftActions, right = rightActions)
+  state.also {
+    it.layoutWidth = constraints.maxWidth
+    it.swipeThreshold = swipeThreshold
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    it.actions = remember(endActions, startActions, isRtl) {
+      ActionFinder(
+        left = if (isRtl) endActions else startActions,
+        right = if (isRtl) startActions else endActions,
+      )
+    }
   }
 
-  val offset = state.offset.value
-  val thresholdCrossed = abs(offset) > LocalDensity.current.run { swipeThreshold.toPx() }
-
-  var swipedAction: SwipeActionMeta? by remember {
-    mutableStateOf(null)
-  }
-  val visibleAction: SwipeActionMeta? = remember(offset, actions) {
-    actions.actionAt(offset, totalWidth = constraints.maxWidth)
-  }
   val backgroundColor: Color by animateColorAsState(
     when {
-      swipedAction != null -> swipedAction!!.value.background
-      !thresholdCrossed -> backgroundUntilSwipeThreshold
-      visibleAction == null -> Color.Transparent
-      else -> visibleAction.value.background
+      state.swipedAction != null -> state.swipedAction!!.value.background
+      !state.hasCrossedSwipeThreshold() -> backgroundUntilSwipeThreshold
+      state.visibleAction != null -> state.visibleAction!!.value.background
+      else -> Color.Transparent
     }
   )
 
   val scope = rememberCoroutineScope()
   Box(
     modifier = Modifier
-      .absoluteOffset { IntOffset(x = offset.roundToInt(), y = 0) }
-      .drawOverContent { ripple.draw(scope = this) }
+      .absoluteOffset { IntOffset(x = state.offset.value.roundToInt(), y = 0) }
+      .drawOverContent { state.ripple.draw(scope = this) }
       .draggable(
         orientation = Horizontal,
         enabled = !state.isResettingOnRelease,
         onDragStopped = {
           scope.launch {
-            if (thresholdCrossed && visibleAction != null) {
-              swipedAction = visibleAction
-              swipedAction!!.value.onSwipe()
-              ripple.animate(action = swipedAction!!)
-            }
-          }
-          scope.launch {
-            state.resetOffset()
-            swipedAction = null
+            state.handleOnDragStopped()
           }
         },
         state = state.draggableState,
@@ -112,11 +87,11 @@ fun SwipeableActionsBox(
     content = content
   )
 
-  (swipedAction ?: visibleAction)?.let { action ->
+  (state.swipedAction ?: state.visibleAction)?.let { action ->
     ActionIconBox(
       modifier = Modifier.matchParentSize(),
       action = action,
-      offset = offset,
+      offset = state.offset.value,
       backgroundColor = backgroundColor,
       content = { action.value.icon() }
     )
