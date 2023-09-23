@@ -9,23 +9,18 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
 fun rememberSwipeableActionsState(): SwipeableActionsState {
-  return remember { SwipeableActionsState() }.apply {
-    density = LocalDensity.current
-  }
+  return remember { SwipeableActionsState() }
 }
 
 /**
@@ -47,9 +42,8 @@ class SwipeableActionsState internal constructor() {
   }
 
   internal var layoutWidth: Int by mutableIntStateOf(0)
-  internal var swipeThreshold: Dp by mutableStateOf(0.dp)
+  internal var swipeThresholdPx: Float by mutableFloatStateOf(0f)
   internal val ripple = SwipeRippleState()
-  internal lateinit var density: Density
 
   internal var actions: ActionFinder by mutableStateOf(
     ActionFinder(left = emptyList(), right = emptyList())
@@ -71,7 +65,7 @@ class SwipeableActionsState internal constructor() {
   }
 
   internal fun hasCrossedSwipeThreshold(): Boolean {
-    return abs(offsetState.value) > density.run { swipeThreshold.toPx() }
+    return abs(offsetState.value) > swipeThresholdPx
   }
 
   internal suspend fun handleOnDragStopped() = coroutineScope {

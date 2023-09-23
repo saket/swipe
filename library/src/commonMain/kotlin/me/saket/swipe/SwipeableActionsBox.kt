@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -50,7 +51,7 @@ fun SwipeableActionsBox(
 ) = BoxWithConstraints(modifier) {
   state.also {
     it.layoutWidth = constraints.maxWidth
-    it.swipeThreshold = swipeThreshold
+    it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     it.actions = remember(endActions, startActions, isRtl) {
       ActionFinder(
