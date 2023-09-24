@@ -59,8 +59,10 @@ class SwipeableActionsState internal constructor() {
     val canSwipeTowardsRight = actions.left.isNotEmpty()
     val canSwipeTowardsLeft = actions.right.isNotEmpty()
 
-    // Add some resistance if needed.
-    val isAllowed = (targetOffset > 0f && canSwipeTowardsRight) || (targetOffset < 0f && canSwipeTowardsLeft)
+    val isAllowed = isResettingOnRelease
+      || targetOffset == 0f
+      || (targetOffset > 0f && canSwipeTowardsRight)
+      || (targetOffset < 0f && canSwipeTowardsLeft)
     offsetState.value += if (isAllowed) delta else delta / 10
   }
 
