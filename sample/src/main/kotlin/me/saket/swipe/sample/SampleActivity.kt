@@ -42,6 +42,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import me.saket.swipe.SwipeableActionsBoxStaticIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 class SampleActivity : AppCompatActivity() {
@@ -98,16 +99,27 @@ private fun SwipeableBoxPreview(modifier: Modifier = Modifier) {
     isUndo = isArchived,
   )
 
-  SwipeableActionsBox(
-    modifier = modifier,
-    startActions = listOf(replyAll),
-    endActions = listOf(snooze, archive),
-    swipeThreshold = 40.dp,
-    backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(40.dp)
-  ) {
-    BatmanIpsumItem(
-      isSnoozed = isSnoozed
-    )
+  Column(modifier = modifier) {
+    SwipeableActionsBox(
+      startActions = listOf(replyAll),
+      endActions = listOf(snooze, archive),
+      swipeThreshold = 40.dp,
+      backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(40.dp)
+    ) {
+      BatmanIpsumItem(
+        isSnoozed = isSnoozed
+      )
+    }
+    SwipeableActionsBoxStaticIcon(
+      startActions = listOf(replyAll),
+      endActions = listOf(snooze, archive),
+      swipeThreshold = 40.dp,
+      backgroundUntilSwipeThreshold = MaterialTheme.colorScheme.surfaceColorAtElevation(40.dp)
+    ) {
+      BatmanIpsumItem(
+        isSnoozed = isSnoozed
+      )
+    }
   }
 }
 

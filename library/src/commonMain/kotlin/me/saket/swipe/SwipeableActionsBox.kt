@@ -99,6 +99,70 @@ fun SwipeableActionsBox(
   }
 }
 
+/**
+ * A variant of SwipeableActionsBox with static icons that do not move while swiping.
+ * @see SwipeableActionsBox
+ */
+@Composable
+fun SwipeableActionsBoxStaticIcon(
+  modifier: Modifier = Modifier,
+  state: SwipeableActionsState = rememberSwipeableActionsState(),
+  startActions: List<SwipeAction> = emptyList(),
+  endActions: List<SwipeAction> = emptyList(),
+  swipeThreshold: Dp = 40.dp,
+  backgroundUntilSwipeThreshold: Color = Color.DarkGray,
+  content: @Composable BoxScope.() -> Unit
+) = BoxWithConstraints(modifier) {
+  state.also {
+    it.layoutWidth = constraints.maxWidth
+    it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    it.actions = remember(endActions, startActions, isRtl) {
+      ActionFinder(
+        left = if (isRtl) endActions else startActions,
+        right = if (isRtl) startActions else endActions,
+      )
+    }
+  }
+
+  val backgroundColor: Color by animateColorAsState(
+    when {
+      state.swipedAction != null -> state.swipedAction!!.value.background
+      !state.hasCrossedSwipeThreshold() -> backgroundUntilSwipeThreshold
+      state.visibleAction != null -> state.visibleAction!!.value.background
+      else -> Color.Transparent
+    }
+  )
+
+  val scope = rememberCoroutineScope()
+
+  (state.swipedAction ?: state.visibleAction)?.let { action ->
+    ActionIconBoxStaticIcon(
+      modifier = Modifier.matchParentSize(),
+      action = action,
+      backgroundColor = backgroundColor,
+      content = { action.value.icon() }
+    )
+  }
+
+  Box(
+    modifier = Modifier
+      .absoluteOffset { IntOffset(x = state.offset.value.roundToInt(), y = 0) }
+      .drawOverContent { state.ripple.draw(scope = this) }
+      .draggable(
+        orientation = Horizontal,
+        enabled = !state.isResettingOnRelease,
+        onDragStopped = {
+          scope.launch {
+            state.handleOnDragStopped()
+          }
+        },
+        state = state.draggableState,
+      ),
+    content = content
+  )
+}
+
 @Composable
 private fun ActionIconBox(
   action: SwipeActionMeta,
@@ -119,6 +183,22 @@ private fun ActionIconBox(
       }
       .background(color = backgroundColor),
     horizontalArrangement = if (action.isOnRightSide) Arrangement.Start else Arrangement.End,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    content()
+  }
+}
+
+@Composable
+private fun ActionIconBoxStaticIcon(
+  action: SwipeActionMeta,
+  backgroundColor: Color,
+  modifier: Modifier = Modifier,
+  content: @Composable () -> Unit
+) {
+  Row(
+    modifier = modifier.background(color = backgroundColor),
+    horizontalArrangement = if (action.isOnRightSide) Arrangement.End else Arrangement.Start,
     verticalAlignment = Alignment.CenterVertically,
   ) {
     content()
