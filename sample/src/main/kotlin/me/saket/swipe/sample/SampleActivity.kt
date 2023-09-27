@@ -1,5 +1,6 @@
 package me.saket.swipe.sample
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,8 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import me.saket.swipe.sample.theme.DarkTheme
+import me.saket.swipe.sample.theme.LightTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 class SampleActivity : AppCompatActivity() {
@@ -57,7 +60,11 @@ class SampleActivity : AppCompatActivity() {
         uiController.setNavigationBarColor(Color.Transparent)
       }
 
-      val colors = if (systemInDarkTheme) dynamicDarkColorScheme(this) else dynamicLightColorScheme(this)
+      val colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (systemInDarkTheme) dynamicDarkColorScheme(this) else dynamicLightColorScheme(this)
+      } else {
+        if (systemInDarkTheme) DarkTheme else LightTheme
+      }
 
       MaterialTheme(colors) {
         Scaffold(
