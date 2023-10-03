@@ -7,7 +7,6 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -48,9 +48,8 @@ fun SwipeableActionsBox(
   swipeThreshold: Dp = 40.dp,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
   content: @Composable BoxScope.() -> Unit
-) = BoxWithConstraints(modifier) {
+) = Box(modifier) {
   state.also {
-    it.layoutWidth = constraints.maxWidth
     it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     it.actions = remember(endActions, startActions, isRtl) {
@@ -73,6 +72,7 @@ fun SwipeableActionsBox(
   val scope = rememberCoroutineScope()
   Box(
     modifier = Modifier
+      .onSizeChanged { state.layoutWidth = it.width }
       .absoluteOffset { IntOffset(x = state.offset.value.roundToInt(), y = 0) }
       .drawOverContent { state.ripple.draw(scope = this) }
       .draggable(
