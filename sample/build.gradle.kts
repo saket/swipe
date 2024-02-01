@@ -10,6 +10,7 @@ android {
     applicationId = namespace
     minSdk = libs.versions.minSdk.get().toInt()
     compileSdk = libs.versions.compileSdk.get().toInt()
+    targetSdk = libs.versions.compileSdk.get().toInt()
     versionCode = 1
     versionName = "1.0"
   }
