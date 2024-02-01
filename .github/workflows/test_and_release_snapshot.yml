@@ -34,8 +34,8 @@ jobs:
           name: test-failures
           path: |
             **/build/reports/tests/*/
+            **/build/paparazzi/*/
             **/out/failures/
-            paparazzi/paparazzi-gradle-plugin/src/test/projects/**/build/reports/paparazzi/images/
 
   deploy-snapshot:
     name: Deploy snapshot
