@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -60,14 +59,19 @@ fun SwipeableActionsBox(
     }
   }
 
-  val backgroundColor: Color by animateColorAsState(
-    when {
-      state.swipedAction != null -> state.swipedAction!!.value.background
-      !state.hasCrossedSwipeThreshold() -> backgroundUntilSwipeThreshold
-      state.visibleAction != null -> state.visibleAction!!.value.background
-      else -> Color.Transparent
-    }
-  )
+  val backgroundColor = when {
+    state.swipedAction != null -> state.swipedAction!!.value.background
+    !state.hasCrossedSwipeThreshold() -> backgroundUntilSwipeThreshold
+    state.visibleAction != null -> state.visibleAction!!.value.background
+    else -> Color.Transparent
+  }
+  val animatedBackgroundColor: Color = if (state.layoutWidth == 0) {
+    // Use the current color immediately because paparazzi can only capture the 1st frame.
+    // https://github.com/cashapp/paparazzi/issues/1261
+    backgroundColor
+  } else {
+    animateColorAsState(backgroundColor).value
+  }
 
   val scope = rememberCoroutineScope()
   Box(
@@ -93,7 +97,7 @@ fun SwipeableActionsBox(
       modifier = Modifier.matchParentSize(),
       action = action,
       offset = state.offset.value,
-      backgroundColor = backgroundColor,
+      backgroundColor = animatedBackgroundColor,
       content = { action.value.icon() }
     )
   }
