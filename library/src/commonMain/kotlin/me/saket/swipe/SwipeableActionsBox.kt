@@ -75,7 +75,6 @@ fun SwipeableActionsBox(
   }
 
   val scope = rememberCoroutineScope()
-  val hapticFeedback = LocalHapticFeedback.current
   Box(
     modifier = Modifier
       .onSizeChanged { state.layoutWidth = it.width }
@@ -85,7 +84,6 @@ fun SwipeableActionsBox(
         enabled = !state.isResettingOnRelease,
         onDragStopped = {
           scope.launch {
-            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
             state.handleOnDragStopped()
           }
         },
@@ -104,9 +102,10 @@ fun SwipeableActionsBox(
     )
   }
 
-  if (state.hasCrossedSwipeThreshold()) {
+  val hapticFeedback = LocalHapticFeedback.current
+  if (state.hasCrossedSwipeThreshold() && state.swipedAction == null) {
     LaunchedEffect(state.visibleAction) {
-      hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+      hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
     }
   }
 }
