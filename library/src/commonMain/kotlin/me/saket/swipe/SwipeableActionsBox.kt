@@ -2,8 +2,6 @@ package me.saket.swipe
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation.Horizontal
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -79,8 +77,7 @@ fun SwipeableActionsBox(
       .onSizeChanged { state.layoutWidth = it.width }
       .absoluteOffset { IntOffset(x = state.offset.value.roundToInt(), y = 0) }
       .drawOverContent { state.ripple.draw(scope = this) }
-      .draggable(
-        orientation = Horizontal,
+      .horizontalDraggable(
         enabled = !state.isResettingOnRelease,
         onDragStopped = {
           scope.launch {
