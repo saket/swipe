@@ -1,6 +1,8 @@
 package me.saket.swipe
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.DraggableState
@@ -43,6 +45,8 @@ class SwipeableActionsState internal constructor() {
 
   internal var layoutWidth: Int by mutableIntStateOf(0)
   internal var swipeThresholdPx: Float by mutableFloatStateOf(0f)
+  internal var swipeMaxDistancePx: Float by mutableFloatStateOf(0f)
+  internal var swipeFrictionEasing: Easing by mutableStateOf(LinearEasing)
   internal val ripple = SwipeRippleState()
 
   internal var actions: ActionFinder by mutableStateOf(
@@ -63,6 +67,20 @@ class SwipeableActionsState internal constructor() {
       || targetOffset == 0f
       || (targetOffset > 0f && canSwipeTowardsRight)
       || (targetOffset < 0f && canSwipeTowardsLeft)
+
+    // How to deal with the side that has multiple actions?
+    // temporarily limit to enable friction for the side that only has one action
+    val isAllowedForFriction = (targetOffset > 0f && actions.left.size == 1)
+      || (targetOffset < 0f && actions.right.size == 1)
+
+    if (swipeMaxDistancePx > 0f && isAllowed && isAllowedForFriction) {
+      val progress = swipeFrictionEasing.transform(abs(offsetState.value) / swipeMaxDistancePx)
+      val progressReverse = (1f - progress).coerceIn(0f, 1f)
+
+      offsetState.value += delta * progressReverse
+      return@DraggableState
+    }
+
     offsetState.value += if (isAllowed) delta else delta / 10
   }
 
