@@ -1,19 +1,8 @@
-package me.saket.swipe.sample
+package me.saket.swipe.sample.theme
 
-import android.os.Build
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,16 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Archive
 import androidx.compose.material.icons.twotone.ReplyAll
 import androidx.compose.material.icons.twotone.Snooze
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,50 +22,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
-import me.saket.swipe.sample.theme.DarkTheme
-import me.saket.swipe.sample.theme.LightTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
-class SampleActivity : AppCompatActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
 
-    setContent {
-      val uiController = rememberSystemUiController()
-      val systemInDarkTheme = isSystemInDarkTheme()
-      LaunchedEffect(Unit) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        uiController.setSystemBarsColor(Color.Transparent, darkIcons = !systemInDarkTheme)
-        uiController.setNavigationBarColor(Color.Transparent)
-      }
+@Composable
+fun MainContent(modifier: Modifier = Modifier) {
 
-      val colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        if (systemInDarkTheme) dynamicDarkColorScheme(this) else dynamicLightColorScheme(this)
-      } else {
-        if (systemInDarkTheme) DarkTheme else LightTheme
-      }
-
-      MaterialTheme(colors) {
-        Scaffold(
-          topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.app_name)) })
-          }
-        ) { contentPadding ->
-          LazyColumn(Modifier.padding(contentPadding).fillMaxSize()) {
-            items(20) { index ->
-              SwipeableBoxPreview(
-                Modifier.fillMaxWidth()
-              )
-            }
-          }
-        }
-      }
+  LazyColumn(modifier.fillMaxSize()) {
+    items(20) { index ->
+      SwipeableBoxPreview(
+        Modifier.fillMaxWidth()
+      )
     }
   }
 }
@@ -125,7 +77,7 @@ private fun SwipeableBoxPreview(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun BatmanIpsumItem(
+fun BatmanIpsumItem(
   modifier: Modifier = Modifier,
   isSnoozed: Boolean
 ) {

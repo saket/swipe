@@ -30,6 +30,7 @@ android {
 
 dependencies {
   implementation(projects.library)
+  implementation(projects.sample.shared)
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.activity)
   implementation(libs.compose.foundation)

@@ -14,7 +14,9 @@ dependencyResolutionManagement {
 }
 
 include ':library'
-include ':sample'
+include ':sample:androidApp'
+include ':sample:webApp'
+include ':sample:shared'
 
 rootProject.name = "swipe"
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
