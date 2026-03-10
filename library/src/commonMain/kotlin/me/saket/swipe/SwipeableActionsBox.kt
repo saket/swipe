@@ -103,10 +103,16 @@ fun SwipeableActionsBox(
   }
 
   val hapticFeedback = LocalHapticFeedback.current
-  if (state.hasCrossedSwipeThreshold() && state.swipedAction == null) {
-    LaunchedEffect(state.visibleAction) {
-      hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+  var offsetCrossed by remember { mutableStateOf(false) }
+  if (state.hasCrossedSwipeThreshold()) {
+    if (!offsetCrossed) {
+      offsetCrossed = true
+      LaunchedEffect(state.visibleAction) {
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+      }
     }
+  } else {
+    offsetCrossed = false
   }
 }
 
