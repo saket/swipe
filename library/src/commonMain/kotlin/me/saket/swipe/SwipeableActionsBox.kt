@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import kotlin.math.log
 import kotlin.math.roundToInt
 
 /**
@@ -46,6 +47,7 @@ fun SwipeableActionsBox(
   startActions: List<SwipeAction> = emptyList(),
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
+  swipeLogarithmicEaseStart: Dp = 20.dp,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
   content: @Composable BoxScope.() -> Unit
 ) = Box(modifier) {
@@ -75,10 +77,16 @@ fun SwipeableActionsBox(
   }
 
   val scope = rememberCoroutineScope()
+  val swipeLogarithmicEaseStartPx = LocalDensity.current.run { swipeThreshold.toPx() }
   Box(
     modifier = Modifier
       .onSizeChanged { state.layoutWidth = it.width }
-      .absoluteOffset { IntOffset(x = state.offset.value.roundToInt(), y = 0) }
+      .absoluteOffset {
+        IntOffset(
+          x = state.offset.value.logarithmicEase(swipeLogarithmicEaseStartPx).roundToInt(),
+          y = 0
+        )
+      }
       .drawOverContent { state.ripple.draw(scope = this) }
       .horizontalDraggable(
         enabled = !state.isResettingOnRelease,
@@ -96,7 +104,7 @@ fun SwipeableActionsBox(
     ActionIconBox(
       modifier = Modifier.matchParentSize(),
       action = action,
-      offset = state.offset.value,
+      offset = state.offset.value.logarithmicEase(swipeLogarithmicEaseStartPx),
       backgroundColor = animatedBackgroundColor,
       content = { action.value.icon() }
     )
@@ -140,5 +148,13 @@ private fun Modifier.drawOverContent(onDraw: DrawScope.() -> Unit): Modifier {
   return drawWithContent {
     drawContent()
     onDraw(this)
+  }
+}
+
+fun Float.logarithmicEase(start: Float): Float {
+  return when {
+    this in -start..start -> this
+    this > start -> log((this - start) / 10 + 1, 3f) * 10 + start
+    else -> -((-this).logarithmicEase(start))
   }
 }
