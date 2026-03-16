@@ -1,6 +1,8 @@
 package me.saket.swipe
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.Easing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +37,12 @@ import kotlin.math.roundToInt
  * @param swipeThreshold Minimum drag distance before any [SwipeAction] is
  * activated and can be swiped.
  *
+ * @param swipeMaxDistance Maximum distance that can be swiped.
+ * 0.dp means that the [SwipeAction] can be swiped as far as you want.
+ *
+ * @param swipeFrictionEasing Easing function that determines how fast the
+ * [SwipeAction] is swiped.
+ *
  * @param backgroundUntilSwipeThreshold Color drawn behind the content until
  * [swipeThreshold] is reached. When the threshold is passed, this color is
  * replaced by the currently visible [SwipeAction]'s background.
@@ -46,11 +54,17 @@ fun SwipeableActionsBox(
   startActions: List<SwipeAction> = emptyList(),
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
+  swipeMaxDistance: Dp = swipeThreshold * 3f,
+  swipeFrictionEasing: Easing = EaseIn,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
   content: @Composable BoxScope.() -> Unit
 ) = Box(modifier) {
   state.also {
-    it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
+    LocalDensity.current.run {
+      it.swipeThresholdPx = swipeThreshold.toPx()
+      it.swipeMaxDistancePx = swipeMaxDistance.toPx()
+    }
+    it.swipeFrictionEasing = swipeFrictionEasing
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     it.actions = remember(endActions, startActions, isRtl) {
       ActionFinder(
