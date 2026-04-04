@@ -54,16 +54,12 @@ fun SwipeableActionsBox(
 ) = Box(modifier) {
   state.also {
     it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
-    val maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
+    it.maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
       Float.POSITIVE_INFINITY
     } else {
       LocalDensity.current.run { maxSwipeDistance.toPx() }
     }
-    it.resolvedMaxPx = resolveMaxSwipePx(
-      maxSwipeDistancePx = maxSwipeDistancePx,
-      maxSwipeFraction = maxSwipeFraction,
-      layoutWidth = it.layoutWidth,
-    )
+    it.maxSwipeFraction = maxSwipeFraction
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     it.actions = remember(endActions, startActions, isRtl) {
       ActionFinder(

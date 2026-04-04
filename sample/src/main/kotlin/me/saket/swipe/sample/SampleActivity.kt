@@ -88,7 +88,7 @@ class SampleActivity : AppCompatActivity() {
               item {
                 Spacer(Modifier.height(16.dp))
                 Text(
-                  text = "Limited swipe distance (200dp)",
+                  text = "Limited swipe distance (85dp)",
                   color = MaterialTheme.colorScheme.secondary,
                   style = MaterialTheme.typography.titleMedium,
                   modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -96,7 +96,7 @@ class SampleActivity : AppCompatActivity() {
               }
               itemsIndexed(MailThreads.take(2)) { index, thread ->
                 SwipeToReveal(
-                  state = rememberSwipeToRevealState(maxSwipeDistance = 200.dp)
+                  state = rememberSwipeToRevealState(maxSwipeDistance = 85.dp)
                 ) {
                   EmailItem(
                     thread = thread,

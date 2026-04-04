@@ -23,20 +23,17 @@ fun rememberSwipeToRevealState(
   maxSwipeDistance: Dp = Dp.Unspecified,
   maxSwipeFraction: Float = Float.NaN,
 ): SwipeToRevealState {
+  val maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
+    Float.POSITIVE_INFINITY
+  } else {
+    with(LocalDensity.current) { maxSwipeDistance.toPx() }
+  }
   return remember {
     RealSwipeToRevealState()
   }.also {
     val real = it as RealSwipeToRevealState
-    val maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
-      Float.POSITIVE_INFINITY
-    } else {
-      with(LocalDensity.current) { maxSwipeDistance.toPx() }
-    }
-    real.resolvedMaxPx = resolveMaxSwipePx(
-      maxSwipeDistancePx = maxSwipeDistancePx,
-      maxSwipeFraction = maxSwipeFraction,
-      layoutWidth = real.layoutWidth,
-    )
+    real.maxSwipeDistancePx = maxSwipeDistancePx
+    real.maxSwipeFraction = maxSwipeFraction
   }
 }
 
@@ -51,7 +48,8 @@ sealed interface SwipeToRevealState {
 
 internal class RealSwipeToRevealState : SwipeToRevealState {
   override var offset = mutableFloatStateOf(0f)
-  var resolvedMaxPx: Float = Float.POSITIVE_INFINITY
+  var maxSwipeDistancePx: Float = Float.POSITIVE_INFINITY
+  var maxSwipeFraction: Float = Float.NaN
   var layoutWidth: Int = 0
 
   val isResettingOnRelease: Boolean by derivedStateOf {
@@ -61,6 +59,11 @@ internal class RealSwipeToRevealState : SwipeToRevealState {
 
   val draggableState = DraggableState { delta ->
     val targetOffset = offset.value + delta
+    val resolvedMaxPx = resolveMaxSwipePx(
+      maxSwipeDistancePx = maxSwipeDistancePx,
+      maxSwipeFraction = maxSwipeFraction,
+      layoutWidth = layoutWidth,
+    )
 
     // todo:
     val canSwipeTowardsRight = true //actions.left.isNotEmpty()
