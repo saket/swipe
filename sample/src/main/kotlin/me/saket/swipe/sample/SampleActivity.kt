@@ -86,6 +86,46 @@ class SampleActivity : AppCompatActivity() {
                 )
               }
               item {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                  text = "Limited swipe distance (200dp)",
+                  color = MaterialTheme.colorScheme.secondary,
+                  style = MaterialTheme.typography.titleMedium,
+                  modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+              }
+              itemsIndexed(MailThreads.take(2)) { index, thread ->
+                SwipeToReveal(
+                  state = rememberSwipeToRevealState(maxSwipeDistance = 200.dp)
+                ) {
+                  EmailItem(
+                    thread = thread,
+                    index = index,
+                    count = 2,
+                  )
+                }
+              }
+              item {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                  text = "Limited swipe (50% of width)",
+                  color = MaterialTheme.colorScheme.secondary,
+                  style = MaterialTheme.typography.titleMedium,
+                  modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+              }
+              itemsIndexed(MailThreads.take(2)) { index, thread ->
+                SwipeToReveal(
+                  state = rememberSwipeToRevealState(maxSwipeFraction = 0.5f)
+                ) {
+                  EmailItem(
+                    thread = thread,
+                    index = index,
+                    count = 2,
+                  )
+                }
+              }
+              item {
                 Spacer(Modifier.height(72.dp))
               }
             }
