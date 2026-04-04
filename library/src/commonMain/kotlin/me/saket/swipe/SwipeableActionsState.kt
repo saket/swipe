@@ -71,21 +71,15 @@ class SwipeableActionsState internal constructor() {
       maxSwipeFraction = maxSwipeFraction,
       layoutWidth = layoutWidth,
     )
-    val effectiveDelta = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
-      val absTarget = abs(targetOffset)
-      if (absTarget > resolvedMaxPx) {
-        val overflow = absTarget - resolvedMaxPx
-        delta * (1f / (1f + overflow / resolvedMaxPx))
-      } else {
-        delta
-      }
+    val clampedOffset = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
+      targetOffset.coerceIn(-resolvedMaxPx, resolvedMaxPx)
     } else if (isAllowed) {
-      delta
+      targetOffset
     } else {
-      delta / 10
+      offsetState.value + delta / 10
     }
 
-    offsetState.value += effectiveDelta
+    offsetState.value = clampedOffset
   }
 
   internal fun hasCrossedSwipeThreshold(): Boolean {

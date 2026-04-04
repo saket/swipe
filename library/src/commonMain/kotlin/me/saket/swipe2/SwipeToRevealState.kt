@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.isUnspecified
 import me.saket.swipe.animationDurationMs
 import me.saket.swipe.resolveMaxSwipePx
-import kotlin.math.abs
 
 @Composable
 fun rememberSwipeToRevealState(
@@ -74,21 +73,15 @@ internal class RealSwipeToRevealState : SwipeToRevealState {
       || (targetOffset > 0f && canSwipeTowardsRight)
       || (targetOffset < 0f && canSwipeTowardsLeft)
 
-    val effectiveDelta = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
-      val absTarget = abs(targetOffset)
-      if (absTarget > resolvedMaxPx) {
-        val overflow = absTarget - resolvedMaxPx
-        delta * (1f / (1f + overflow / resolvedMaxPx))
-      } else {
-        delta
-      }
+    val clampedOffset = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
+      targetOffset.coerceIn(-resolvedMaxPx, resolvedMaxPx)
     } else if (isAllowed) {
-      delta
+      targetOffset
     } else {
-      delta / 10
+      offset.value + delta / 10
     }
 
-    offset.value += effectiveDelta
+    offset.value = clampedOffset
   }
 
   suspend fun handleOnDragStopped() {
