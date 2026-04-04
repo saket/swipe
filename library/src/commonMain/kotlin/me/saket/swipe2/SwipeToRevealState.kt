@@ -11,12 +11,28 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.isUnspecified
 import me.saket.swipe.animationDurationMs
+import me.saket.swipe.resolveMaxSwipePx
 
 @Composable
-fun rememberSwipeToRevealState(): SwipeToRevealState {
+fun rememberSwipeToRevealState(
+  maxSwipeDistance: Dp = Dp.Unspecified,
+  maxSwipeFraction: Float = Float.NaN,
+): SwipeToRevealState {
+  val maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
+    Float.POSITIVE_INFINITY
+  } else {
+    with(LocalDensity.current) { maxSwipeDistance.toPx() }
+  }
   return remember {
     RealSwipeToRevealState()
+  }.also {
+    val real = it as RealSwipeToRevealState
+    real.maxSwipeDistancePx = maxSwipeDistancePx
+    real.maxSwipeFraction = maxSwipeFraction
   }
 }
 
@@ -31,6 +47,9 @@ sealed interface SwipeToRevealState {
 
 internal class RealSwipeToRevealState : SwipeToRevealState {
   override var offset = mutableFloatStateOf(0f)
+  var maxSwipeDistancePx: Float = Float.POSITIVE_INFINITY
+  var maxSwipeFraction: Float = Float.NaN
+  var layoutWidth: Int = 0
 
   val isResettingOnRelease: Boolean by derivedStateOf {
     //swipedAction != null
@@ -39,6 +58,11 @@ internal class RealSwipeToRevealState : SwipeToRevealState {
 
   val draggableState = DraggableState { delta ->
     val targetOffset = offset.value + delta
+    val resolvedMaxPx = resolveMaxSwipePx(
+      maxSwipeDistancePx = maxSwipeDistancePx,
+      maxSwipeFraction = maxSwipeFraction,
+      layoutWidth = layoutWidth,
+    )
 
     // todo:
     val canSwipeTowardsRight = true //actions.left.isNotEmpty()
@@ -48,7 +72,16 @@ internal class RealSwipeToRevealState : SwipeToRevealState {
       || targetOffset == 0f
       || (targetOffset > 0f && canSwipeTowardsRight)
       || (targetOffset < 0f && canSwipeTowardsLeft)
-    offset.value += if (isAllowed) delta else delta / 10
+
+    val clampedOffset = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
+      targetOffset.coerceIn(-resolvedMaxPx, resolvedMaxPx)
+    } else if (isAllowed) {
+      targetOffset
+    } else {
+      offset.value + delta / 10
+    }
+
+    offset.value = clampedOffset
   }
 
   suspend fun handleOnDragStopped() {

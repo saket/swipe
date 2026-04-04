@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -46,11 +47,19 @@ fun SwipeableActionsBox(
   startActions: List<SwipeAction> = emptyList(),
   endActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
+  maxSwipeDistance: Dp = Dp.Unspecified,
+  maxSwipeFraction: Float = Float.NaN,
   backgroundUntilSwipeThreshold: Color = Color.DarkGray,
   content: @Composable BoxScope.() -> Unit
 ) = Box(modifier) {
   state.also {
     it.swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
+    it.maxSwipeDistancePx = if (maxSwipeDistance.isUnspecified) {
+      Float.POSITIVE_INFINITY
+    } else {
+      LocalDensity.current.run { maxSwipeDistance.toPx() }
+    }
+    it.maxSwipeFraction = maxSwipeFraction
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     it.actions = remember(endActions, startActions, isRtl) {
       ActionFinder(

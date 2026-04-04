@@ -73,7 +73,9 @@ fun BasicSwipeToReveal(
     ) = measurables
 
     val contentPlaceable = contentMeasurable.measure(constraints)
+    state.layoutWidth = contentPlaceable.width
     val offsetAsInt = state.offset.value.roundToInt()
+
 
     val actionsConstraints = Constraints(
       maxWidth = abs(offsetAsInt),
