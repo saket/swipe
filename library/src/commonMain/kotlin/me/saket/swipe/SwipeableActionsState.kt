@@ -43,6 +43,7 @@ class SwipeableActionsState internal constructor() {
 
   internal var layoutWidth: Int by mutableIntStateOf(0)
   internal var swipeThresholdPx: Float by mutableFloatStateOf(0f)
+  internal var resolvedMaxPx: Float by mutableFloatStateOf(Float.POSITIVE_INFINITY)
   internal val ripple = SwipeRippleState()
 
   internal var actions: ActionFinder by mutableStateOf(
@@ -63,7 +64,22 @@ class SwipeableActionsState internal constructor() {
       || targetOffset == 0f
       || (targetOffset > 0f && canSwipeTowardsRight)
       || (targetOffset < 0f && canSwipeTowardsLeft)
-    offsetState.value += if (isAllowed) delta else delta / 10
+
+    val effectiveDelta = if (isAllowed && resolvedMaxPx != Float.POSITIVE_INFINITY) {
+      val absTarget = abs(targetOffset)
+      if (absTarget > resolvedMaxPx) {
+        val overflow = absTarget - resolvedMaxPx
+        delta * (1f / (1f + overflow / resolvedMaxPx))
+      } else {
+        delta
+      }
+    } else if (isAllowed) {
+      delta
+    } else {
+      delta / 10
+    }
+
+    offsetState.value += effectiveDelta
   }
 
   internal fun hasCrossedSwipeThreshold(): Boolean {
@@ -91,5 +107,17 @@ class SwipeableActionsState internal constructor() {
       }
       swipedAction = null
     }
+  }
+}
+
+internal fun resolveMaxSwipePx(
+  maxSwipeDistancePx: Float,
+  maxSwipeFraction: Float,
+  layoutWidth: Int,
+): Float {
+  return when {
+    !maxSwipeFraction.isNaN() -> layoutWidth * maxSwipeFraction
+    maxSwipeDistancePx != Float.POSITIVE_INFINITY -> maxSwipeDistancePx
+    else -> Float.POSITIVE_INFINITY
   }
 }
